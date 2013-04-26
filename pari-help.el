@@ -577,8 +577,7 @@ The available commands are
 
 (defmacro gp-ask-name-wisely (this-type)
   "Ask in the minibuffer for a \"this-type\" name and provide a default"
- (`
-  (list
+ `(list
   (let* ( ;; get the word before point into word:
              (word (gp-find-word-to-complete))
 ;; get the argument from the minibuffer into arg
@@ -600,7 +599,7 @@ The available commands are
 ;; produce a help window.)
         (if (intern-soft word gp-c-array) word " ") 
 ;; Else use the arg.
-        arg)))))
+        arg))))
 
 (defun gp-get-TeX-man-entry (fn)
   "Similar to '??fn' under GP"
