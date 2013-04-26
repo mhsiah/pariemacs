@@ -167,7 +167,6 @@ name to 'gp-cpl-lists-list."
        (setq astring
              (concat "gp-cpl-"
                      (gp-proper-name (buffer-name))))
-       (make-symbol astring)
        (set (intern astring) (gp-clear-list lst))
        (setq lst-aux (list (intern astring)))
        (setcdr lst-aux (cdr gp-cpl-lists-list))
@@ -182,7 +181,6 @@ name to 'gp-cpl-lists-list."
 
 (defun gp-add-symbol  (name)
   "Add a name to the obarray, if it is not already there."
-  (make-symbol name)
   (intern name gp-c-array))
 
 (defun gp-find-word-to-complete nil
