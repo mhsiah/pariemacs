@@ -314,6 +314,9 @@
 ;; The only function used outside :
 
 (defun gp-messager (msg-number)
+  "Return message number MSG-NUMBER from the list of messages in 
+GP-MESSAGE-LIST corresponding to the current language as specified
+in GP-LANGUAGE."
   (eval (nth msg-number (assq gp-language gp-messages-list))))
 
 ;; pari-messages.el ends here.
