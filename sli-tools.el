@@ -703,13 +703,13 @@ sli-special-head-offset-alist))
 	    (mapcar
 	     (lambda (ph)
 	       (setq key-lst '())
-	       (mapcar
+	       (mapc
 		(lambda (co)
 		  (when (member (elt co 1) '(head strong end))
 		    (add-to-list 'key-lst (elt co 0))))
 		ph)
 	       key-lst)
-	     (mapcar 'sli-flatten sli-structures)))))
+	     (mapc 'sli-flatten sli-structures)))))
     res))
 
 (defun sli-get-ancestors-alist nil
