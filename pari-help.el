@@ -577,28 +577,28 @@ The available commands are
 
 (defmacro gp-ask-name-wisely (this-type)
   "Ask in the minibuffer for a \"this-type\" name and provide a default"
- `(list
-  (let* ( ;; get the word before point into word:
-             (word (gp-find-word-to-complete))
-;; get the argument from the minibuffer into arg
-             (arg
-               (progn
-                 (define-key minibuffer-local-completion-map " " 'self-insert-command)
-                  ;; It is usually 'minibuffer-complete-word, but C-i does that.
-                 (completing-read
-                   (concat (, this-type)
-                     (if (intern-soft word gp-c-array)
-;; If the word before point is a gp function, offer it as default.
-                         (concat " [Default " word "]" )) ": ")
-;; use gp-c-array as the completion array
-                   gp-c-array))))
+  `(list
+    (let* ( ;; get the word before point into word:
+           (word (gp-find-word-to-complete))
+           ;; get the argument from the minibuffer into arg
+           (arg
+            (progn
+              (define-key minibuffer-local-completion-map " " 'self-insert-command)
+              ;; It is usually 'minibuffer-complete-word, but C-i does that.
+              (completing-read
+               (concat (, this-type)
+                       (if (intern-soft word gp-c-array)
+                           ;; If the word before point is a gp function, offer it as default.
+                           (concat " [Default " word "]" )) ": ")
+               ;; use gp-c-array as the completion array
+               gp-c-array))))
       (define-key minibuffer-local-completion-map " " 'minibuffer-complete-word)
       (if (equal arg "")
-;; If the argument supplied is "", and word is a gp symbol, use it as default.
-;; (Do not use "" as fn in anycase, so otherwise use " ", which will not
-;; produce a help window.)
-        (if (intern-soft word gp-c-array) word " ") 
-;; Else use the arg.
+          ;; If the argument supplied is "", and word is a gp symbol, use it as default.
+          ;; (Do not use "" as fn in anycase, so otherwise use " ", which will not
+          ;; produce a help window.)
+          (if (intern-soft word gp-c-array) word " ") 
+        ;; Else use the arg.
         arg))))
 
 (defun gp-get-TeX-man-entry (fn)
