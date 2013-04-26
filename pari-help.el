@@ -586,7 +586,7 @@ The available commands are
               (define-key minibuffer-local-completion-map " " 'self-insert-command)
               ;; It is usually 'minibuffer-complete-word, but C-i does that.
               (completing-read
-               (concat (, this-type)
+               (concat ,this-type
                        (if (intern-soft word gp-c-array)
                            ;; If the word before point is a gp function, offer it as default.
                            (concat " [Default " word "]" )) ": ")
