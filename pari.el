@@ -587,7 +587,7 @@ The following bindings are available:
 (defun gp-locked-self-insert-command nil
   (interactive)
   (gp-displace-input)
-  (insert-char last-command-char 1))
+  (insert-char last-command-event))
 
 (defun gp-locked-mouse-2 (anevent)
   (interactive "e")
