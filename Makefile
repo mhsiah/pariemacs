@@ -2,12 +2,12 @@
 # You may need to modify one of the following three variables
 
 # Path to pari.cfg file:
-PARI_CFG=/home/hlaw/local/lib/pari/pari.cfg
+PARI_CFG=$(HOME)/local/lib/pari/pari.cfg
 # For Debian: 
 #PARI_CFG=/usr/lib/pari/pari.cfg
 
 # Where to install ourselves ?
-INSTALL=/home/hlaw/.emacs.d/pariemacs
+INSTALL=$(HOME)/.emacs.d/pariemacs
 
 # Path to 'emacs' binary
 EMACS=emacs
