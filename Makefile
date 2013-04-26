@@ -7,7 +7,7 @@ PARI_CFG=/home/hlaw/local/lib/pari/pari.cfg
 #PARI_CFG=/usr/lib/pari/pari.cfg
 
 # Where to install ourselves ?
-INSTALL=/home/hlaw/.emacs.d/pari
+INSTALL=/home/hlaw/.emacs.d/parimacs
 
 # Path to 'emacs' binary
 EMACS=emacs
@@ -16,7 +16,7 @@ EMACS=emacs
 # Maintainer only.
 
 # version number (How do we call ourselves?)
-DIR=pariemacs-3.03
+DIR=parimacs-1.0
 # note that the pariemacs file was called $(DIR).txt
 # and is now called README, with  the addition of the README file.
 FILES=Makefile pari-completion.el pari-conf.el.in pari-fontification.el pari-help.el pari-messages.el pari.el pari-history.el README CHANGES COPYING sli-tools.el
