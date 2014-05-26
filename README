@@ -4,7 +4,7 @@ Copyright (C) 1997-2009 The PARI Group, Bordeaux.
 
 PARIEMACS is part of the PARI/GP system, http://pari.math.u-bordeaux.fr/
 
-New versions are available at 
+New versions are available at
 http://math.univ-lille1.fr/~ramare/ServeurPerso/GP-PARI/index.html
 
                =======================
@@ -52,10 +52,10 @@ behaviour.
 
 You can use the Makefile attached to install this files.  This means
 you only have to run:
-     tar zxvf pariemacs-3.03.tar.gz
-     cd pariemacs-3.03/
+     tar zxvf pariemacs-3.05.tar.gz
+     cd pariemacs-3.05/
      make
-You may need to edit the file Makefile in the pariemacs-3.02/
+You may need to edit the file Makefile in the pariemacs-3.05/
 directory to suit your installation: in Debian
 
    PARI_CFG=/usr/lib/pari/pari.cfg
@@ -89,7 +89,7 @@ when editing such scripts and two main new commands are made available:
 
 M-x gp      starts up the pari-gp process in a new buffer,  *PARI*
             A menu item GP is available with some specific comamnds.
-M-x gpman   starts up a dvi previewer with the PARI-GP manual. 
+M-x gpman   starts up a dvi previewer with the PARI-GP manual.
 
 ===========================================================================
 
@@ -205,7 +205,7 @@ This one may be marked `left' `right' `extended character'  `<>'
 or various other markings. If your keyboard has not got a meta key. You
 can use the escape key as a prefix.
 
-Thus M-\ corresponds to pressing meta and \ together, or pressing 
+Thus M-\ corresponds to pressing meta and \ together, or pressing
 ESC followed by \ .
 ===========================================================================
 
@@ -281,11 +281,11 @@ go back to default setting, erase the corresponding line in your .emacs
 file.
   Emacs about the following symbolic fontification groups:
 
-    in gp-mode (corresponding somehow to what default(colors,...) would do):  
+    in gp-mode (corresponding somehow to what default(colors,...) would do):
       gp-control-statement  gp-default-keywords  gp-default-set
       gp-comment            gp-string            gp-function-proto
-      gp-function-args         gp-error   gp-history  gp-prompt 
-      gp-time-word gp-output  gp-input    gp-timer  gp-help 
+      gp-function-args         gp-error   gp-history  gp-prompt
+      gp-time-word gp-output  gp-input    gp-timer  gp-help
 
     in gp-script-mode:
       gp-control-statement  gp-default-keywords  gp-default-set
@@ -334,7 +334,7 @@ self-descriptive name, except maybe the last one which is called via
 Finally this file is obtainable through the menu-bar. The variable
 gp-pariemacs should contain the proper file, but since it is intended
 for people who have not read these lines, it is looked for in "probable"
-directories. 
+directories.
 ===========================================================================
 
 INDENTATION:
@@ -351,7 +351,7 @@ check(H,q)=
         lastterm,newterm,res);
   ordre2=2;lastterm=mod(2,q);
   newterm=lastterm^2;
- 
+
   while(lastterm<>newterm,
         ordre2=ordre2+1;lastterm=newterm;newterm=2*newterm);
   sz=length(H);
@@ -396,7 +396,7 @@ check(H,q)=
         lastterm,newterm,res);
   ordre2=2;lastterm=mod(2,q);
   newterm=lastterm^2;
- 
+
   while(lastterm<>newterm,
         ordre2=ordre2+1;lastterm=newterm;newterm=2*newterm);
   sz=length(H);
@@ -436,7 +436,7 @@ is not accented to avoid compatibility problems. Another option would be
 to write a separate file for each language, we'll see later.
 
 The choice is done through the menu-bar entry [GP/Customize...]. Then select
-gp-language, choose your language and restart you session of emacs since the 
+gp-language, choose your language and restart you session of emacs since the
 menu-bar will have changed. If you feel brave and want to add a
 language, write to ramare AT math.univ-lille1.fr (you can by the way rewrite
 the "english" part...).
@@ -449,7 +449,7 @@ CUSTOMIZATION:
 Environment variables should be set via the menu-bar, via the two menu-bar
 items [GP or GP-script/Customize...] and [GP or GP-script/Colors/Customize...].
 You also can use the classical way through a hook as explained in the
-note number 3 below. 
+note number 3 below.
 
 Within  the customization-window, you should save these values for them
 to become valid. Note that the variables having something to do with the
@@ -542,7 +542,7 @@ there. That's the meaning of the variable 'gp-locked-mode which is t
 (true) by default. You can set it to nil (false) if this behaviour is
 not what you expect.  You can enter this semi-mode (it is not really
 an emacs mode neither major nor minor) via the menu-bar item
-[GP or GP-script/Customize/Trust Mode], or through usual customization 
+[GP or GP-script/Customize/Trust Mode], or through usual customization
 (hook or menu-bar).
 
 ===========================================================================
@@ -558,7 +558,7 @@ the "trust-mode" is all about. If you set the variable gp-trust-mode to
 t then emacs will not wait for gp to send the prompt. However, in this mode
 you have to be careful not to confuse emacs, since the prompt is its usual
 reference point. You can enter this semi-mode (it is not really an emacs
-mode neither major nor minor) via the menu-bar item 
+mode neither major nor minor) via the menu-bar item
 [GP or GP-script/Customize/Trust Mode],
 or via usual customization (hook or menu-bar). You can also set it by sending
 "/* Trust = On */" to gp, and leave it with "/* Trust = Off/".
@@ -581,7 +581,7 @@ Notes
    M-\ p does not correspond to the gp meta command \p but rather to the
    command default(prompt,...). If this disturbs you it is easy enough to bind
    M-\ p to a command that inserts \p into the *PARI* buffer. The command
-   gp-set-prompt can then be bound to any key sequence that you wish. 
+   gp-set-prompt can then be bound to any key sequence that you wish.
    All the other commands on the M-\ prefix do work by sending a gp meta
    command to the *PARI* buffer.
 
@@ -599,14 +599,14 @@ Notes
    setting the prompt via gp-set-prompt (see end of this note and next one).
    The format is:
 
-       (setq pari-mode-hook 
+       (setq pari-mode-hook
          (function (lambda ()
           ... commands to run when starting up gp ...
         )))
 
    An example is:
 
-       (setq pari-mode-hook 
+       (setq pari-mode-hook
          (function (lambda ()
            (define-key gp-map "\M-\\p" 'gp-meta-p)
            (define-key gp-map "\M-p" 'gp-set-prompt)
@@ -615,7 +615,7 @@ Notes
            (gp-cpl-file my-file)
        )))
 
-  This: 
+  This:
         Binds a function which sends \p to gp (which would need to be defined
              somewhere else), to M-\ p.
         Binds gp-set-prompt to M-p.
@@ -660,7 +660,7 @@ Notes
          ; Select a new prompt:
          ; (gp-set-prompt "...")
        )))
-   
+
    And for instance '...(get-set-prompt "(%R) gp > "))))' will set the
    prompt to "(%R) gp > " as soon as you enter gp.
 
@@ -673,11 +673,11 @@ Notes
    The variables gp-stack-size and gp-prime-limit should be set to integers
    specifying the arguments to gp. See the above example.
 
-   If these variables are  set to "", then the appropriate flags 
-      "-s" or "-p" are *not* sent to gp. 
+   If these variables are  set to "", then the appropriate flags
+      "-s" or "-p" are *not* sent to gp.
    If RET is typed in response to any of the prompts produced by C-u M-x gp
       then the default value, ie., the value of gp-file-name, gp-stack-size,
-      or gp-prime-limit, is assumed. 
+      or gp-prime-limit, is assumed.
    If a space is sent to the prompt (ie SPC RET) then the appropriate argument
        is not  sent to gp, even if the default is non-empty.
 
@@ -736,7 +736,7 @@ TroubleShooting:
      So be sure to use byte-compiled code adapted to emacs version
      you use. In case of trouble, first remove all the .elc files and
      only keep the .el (not compiled) version. This will be slightly
-     slower but safer. 
+     slower but safer.
 ===========================================================================
 LICENSE:
 ========
@@ -752,4 +752,3 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 ===========================================================================
 14-10-2009 version 3.03 (This file refers to pariemacs version 3.03)
-

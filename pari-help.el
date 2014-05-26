@@ -15,10 +15,10 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;; To be used with pari.el version 3.00 or higher
-;; pari-help.el version 3.03
+;; pari-help.el version 3.04
 
 ;; See README for more details.
- 
+
 (provide 'pari-help)
 
 ;; pari.el will use the variable 'gp-c-array-createdp
@@ -28,7 +28,7 @@
 ;; Of pari.el, it uses:
 ;; variables:
 ;;     gp-file-name, gp-version
-;; functions: 
+;; functions:
 ;;     gp-window-manager, gp-wait-for-output, gp-get-shell,
 ;;     gp-background, gp-meta-cmd-general,
 ;;     gp-info-wind-conf, gp-add-symbol, gp-backward-wind-conf, gp-show-help
@@ -276,7 +276,7 @@ the values of `gp-menu-start-simple', `gp-menu-end-simple'."
         (or (= wherex 1) (insert "\n")))
       (message (gp-messager 38))
       (setq gp-menu-end-simple (point)))))
-        
+
 (defun gp-menu nil
   "Major-mode for the gp menu buffer.
 The available commands are
@@ -445,7 +445,7 @@ The available commands are
                   (insert (cdr acons))
                   (put-text-property temp (point) 'follow (car acons))
                   (put-text-property temp (point) 'face 'bold)
-                  (put-text-property temp (point) 'mouse-face 'highlight)    
+                  (put-text-property temp (point) 'mouse-face 'highlight)
                   (insert "\n")))  gp-browser-main-alist)
   (goto-char (point-min)))
 
@@ -506,7 +506,8 @@ The available commands are
   (set-buffer gp-browser-buffer-name)
   (select-window (get-buffer-window gp-browser-buffer-name))
   (gp-browser-main)
-  (set-default-font (frame-parameter gp-main-frame 'font))
+  ;; emacs 19.7 : (set-default-font (frame-parameter gp-main-frame 'font))
+  (set-frame-font (frame-parameter gp-main-frame 'font))
   (select-frame gp-main-frame))
 
 (defsubst gp-split-to-strings (to)
@@ -555,8 +556,8 @@ The available commands are
 
 (defun gp-call-gphelp (win-size word output-buffer opt)
   "Explicit."
-  ;; Beware! If output is short enough, shell-command echoes in the minibuffer :-( 
-  ;; We neutralize the function message to avoid that. 
+  ;; Beware! If output is short enough, shell-command echoes in the minibuffer :-(
+  ;; We neutralize the function message to avoid that.
   ;; That's kind of primitive and local advising :-)
   (let (message oldmessage)
     (fset 'oldmessage (symbol-function 'message))
@@ -597,7 +598,7 @@ The available commands are
           ;; If the argument supplied is "", and word is a gp symbol, use it as default.
           ;; (Do not use "" as fn in anycase, so otherwise use " ", which will not
           ;; produce a help window.)
-          (if (intern-soft word gp-c-array) word " ") 
+          (if (intern-soft word gp-c-array) word " ")
         ;; Else use the arg.
         arg))))
 
@@ -606,7 +607,7 @@ The available commands are
   (interactive (gp-ask-name-wisely (gp-messager 21)))
 
     (gp-call-gphelp (window-width) fn nil "")
-    
+
     (if (buffer-live-p (get-buffer "*Shell Command Output*"))
       (save-excursion
         (set-buffer "*Shell Command Output*")
@@ -814,13 +815,13 @@ used for completion."
       ["on Subject..." gp-get-apropos t]
       ["on Function..." gp-get-man-entry t])
    '("TeX Info"
-      ["Manual" gpman :active t :key-sequence nil]     
+      ["Manual" gpman :active t :key-sequence nil]
       ["Tutorial" gp-tutorial :active t :key-sequence nil]
       ["on Function ..." gp-get-TeX-man-entry :active t :key-sequence nil])
    (vector (gp-messager 63) 'gp-show-pariemacs 't)))
 
 (add-hook 'pari-mode-hook
-  '(lambda nil 
+  '(lambda nil
      (define-key gp-map "\M-?"          (function gp-get-man-entry))
      (define-key gp-map "\M-H"          (function gp-get-apropos))
      (define-key gp-script-map "\M-?"   (function gp-get-man-entry))
@@ -832,7 +833,7 @@ used for completion."
 (add-hook 'pari-menu-bar-update-hook
   '(lambda nil ;; The item (gp-messager 48) should already exist.
                ;; It is build at the very beginning.
-     (when (and gp-menu-barp 
+     (when (and gp-menu-barp
                 (or (and (eq major-mode 'gp-mode)
                          (= gp-menu-map-level 1))
                     (and (eq major-mode 'gp-script-mode)

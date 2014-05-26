@@ -15,10 +15,10 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;; To be used with pari.el version 3.00 or higher
-;; pari-completion.el version 3.03
+;; pari-completion.el version 3.04
 
 ;; See README for more details.
- 
+
 (provide 'pari-completion)
 
 ;; pari.el will use the function 'gp-quit-cpl-edit.
@@ -28,7 +28,7 @@
 ;; Of pari.el, it uses:
 ;; variables:
 ;;     gp-process, gp-prompt-pattern, gp-tutorial-requiredp
-;; functions: 
+;; functions:
 ;;     gp-restore-wind-conf, gp-background,
 ;;     gp-store-wind-conf, gp-backward-wind-conf,
 ;;     gp-window-manager
@@ -121,7 +121,8 @@ when the buffer *PARI* is selected."
 (defun gp-mouse-2 (event)
   "A kind of hook for 'mouse-choose-completion."
   (interactive "e")
-  (funcall 'mouse-choose-completion event)
+  ;; 'mouse-choose-completion --> 'choose-completion   since emacs 23 (24 ?)
+  (funcall 'choose-completion event)
   ;; 'mouse-choose-completion comes from the standard file "mouse.el".
   (gp-restore-wind-conf) (forward-word 1))
 
@@ -189,7 +190,7 @@ name to 'gp-cpl-lists-list."
       (if (char-equal (preceding-char) ?() (forward-char -1))
       (if (not (bolp))
           (progn
-            (forward-char -1)           
+            (forward-char -1)
             (if (looking-at "\\w")
                 (progn (forward-char 1) (forward-word -1))
                 (forward-char 1))))
@@ -269,7 +270,7 @@ ie a list of lists whose cars are strings used for completion."
            (if (< (length fun-list) 2)
                (list to-insert nil)  ; Unique completion.
                (list to-insert fun-list)))
-          (t (setq fun-list 
+          (t (setq fun-list
                    (all-completions comp lst))
              (if (< (length fun-list) 2)
                  (list "" nil)       ; Unique completion.
@@ -277,7 +278,7 @@ ie a list of lists whose cars are strings used for completion."
 
 (defun gp-ask-cpl-via-readline (context)
   (let ((to-insert nil) (fun-list ""))
-                    
+
    (if (gp-background)
     (save-excursion
       (set-buffer "*PARI*")
@@ -288,19 +289,19 @@ ie a list of lists whose cars are strings used for completion."
   ;; ask for all completions (readline command)
         (process-send-string gp-process (concat context "\t" ))
         (let ((notdone t))
-	  (while notdone 
-	    (accept-process-output gp-process)
-	    (let ((p (point)))
-	      (if (or
-		    (not (and (processp gp-process) 
-			    (eq 'run (process-status gp-process))))
-		  (search-backward "@E_N_D" (1+ temp) t))
-	;; If gp is not running, or @E_N_D  has appeared, stop.
-	      (progn 
-		(message (gp-messager 6))
-		(setq notdone nil last (point)))
-	;; Else wait a bit longer.
-	      (message (gp-messager 15)) (goto-char p)))))
+          (while notdone
+            (accept-process-output gp-process)
+            (let ((p (point)))
+              (if (or
+                    (not (and (processp gp-process)
+                            (eq 'run (process-status gp-process))))
+                  (search-backward "@E_N_D" (1+ temp) t))
+        ;; If gp is not running, or @E_N_D  has appeared, stop.
+              (progn
+                (message (gp-messager 6))
+                (setq notdone nil last (point)))
+        ;; Else wait a bit longer.
+              (message (gp-messager 15)) (goto-char p)))))
 
       ;; Get end of completed-part:
       (search-backward "@" nil t)
@@ -308,7 +309,7 @@ ie a list of lists whose cars are strings used for completion."
       (forward-char 1) ;; In order to skip the "@".
       ;; Possible further completions:
       (if (< (point) last)
-	(setq fun-list (buffer-substring-no-properties (point) (1- last))))
+        (setq fun-list (buffer-substring-no-properties (point) (1- last))))
       (delete-region temp (point-max))
       ;; clear line in the gp-process:
       (process-send-string gp-process "\C-A\C-K"))))
@@ -323,7 +324,7 @@ is a list of list of possible matching words."
     ;; the end of the word to complete.
 
     ;; Insert the beginning of the completion
-    ;; BEFORE any window change :    
+    ;; BEFORE any window change :
     (if (not (string= (car ans) ""))
         (progn
           (insert (car ans))
@@ -332,7 +333,7 @@ is a list of list of possible matching words."
 
     (if (equal (nth 1 ans) nil)
     ;; at most one match:
-	(if (and (get-buffer "*Completions*")
+        (if (and (get-buffer "*Completions*")
                  (get-buffer-window "*Completions*"))
             ;; Occurs whenever an earlier completion has
             ;; been asked for.
@@ -354,7 +355,7 @@ is a list of list of possible matching words."
             ;; progress.
             (gp-store-wind-conf))
         (with-output-to-temp-buffer "*Completions*"
-	  (display-completion-list (nth 1 ans))))))))
+          (display-completion-list (nth 1 ans))))))))
 
 (defun gp-ask-cpl-via-readline-and-emacs (word)
   (interactive)
@@ -431,7 +432,7 @@ is a list of list of possible matching words."
 ;;    (if (re-search-forward "Last Modification: " nil t)
 ;;    ;; We have found this string and update what's behind:
 ;;        (let ((kill-whole-line nil)) ;; local value of global parameter.
-;;          (backward-char 1) ;;so that we are sure something is on this line. 
+;;          (backward-char 1) ;;so that we are sure something is on this line.
 ;;          (kill-line)
 ;;          (insert " " (current-time-string)))))
 
@@ -443,7 +444,7 @@ is a list of list of possible matching words."
 ;;   (interactive
 ;;     (list (gp-read-input (gp-messager 33)
 ;;                    (concat (gp-possible-file-name) ".cpl") "" t)))
- 
+
 ;;     (gp-store-wind-conf)
 ;;     (or (file-exists-p (expand-file-name my-cpl-file))
 ;;         ;; If the file does not exist, create it (the list may exists though):
@@ -553,11 +554,11 @@ is a list of list of possible matching words."
 ;;       (let (theplace (thelist nil))
 ;;         (while (setq theplace (gp-find-global-var nil))
 ;;           (add-to-list 'thelist
-;;                        (buffer-substring-no-properties (car theplace) (cdr theplace))))           
+;;                        (buffer-substring-no-properties (car theplace) (cdr theplace))))
 ;;         (setq thelist (sort thelist (function string-lessp))) ; We order things.
 ;;         (set-buffer my-cpl-file)
 ;;         (mapcar (lambda (fn) (insert fn "\n")) (gp-clear-list2 thelist))))
-    
+
 ;;     (if (or option (file-exists-p my-cpl-file))
 ;;         (progn
 ;;           ;; Prepare buffer for closing, no backup-file:
@@ -608,7 +609,7 @@ is a list of list of possible matching words."
 
 (add-hook 'pari-menu-bar-update-hook
   '(lambda nil
-     (when (and gp-menu-barp 
+     (when (and gp-menu-barp
                 (or (and (eq major-mode 'gp-mode)
                          (= gp-menu-map-level 1))
                     (and (eq major-mode 'gp-script-mode)
@@ -625,6 +626,6 @@ is a list of list of possible matching words."
          (setq gp-menu-map-level 2)
          (message "Menu bar item GP loaded till level 2.")))))
 
-;;Remove messages 64 71 65 66 67 
+;;Remove messages 64 71 65 66 67
 ;;gp-cpl-file-menu gp-cpl-file gp-edit-cpl-file gp-cpl-file-info
 ;; pari-completion.el ends here ---------------

@@ -83,3 +83,16 @@ FROM 3.02 to 3.03
    are now colored in gp-control-statement.
 -- Modified the regexp used in gp-find-global-var for speed
    (it could be so slow on long buffer that it stopped everything).
+=================
+FROM 3.03 to 3.04
+=================
+-- Changed read-input to read-string
+-- Changed last-command-char to last-command-event
+=================
+FROM 3.04 to 3.05
+=================
+-- Introduced gp-flag-for-emacs in pari-conf.el
+=================
+FROM 3.05 to 3.06
+=================
+-- Corrected gp-flag-for-emacs in pari-conf.el

@@ -1,6 +1,6 @@
 ;; pari.el -- GP/PARI editing support package.
 
-;; Copyright (C) 1997-2009  The PARI group.
+;; Copyright (C) 1997-2013  The PARI group.
 
 ;; This file is part of the PARIEMACS package.
 
@@ -14,13 +14,14 @@
 ;; to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
 
-;; pari.el version 3.03
+;; pari.el version 3.06  (07-November-2013): Olivier Ramare (ramare AT math.univ-lille1.fr).
 
 ;; Major mode for editing GP scripts. It provides functions for editing
 ;; the code and evaluating it . See the documentation of gp-script-mode
-;; and read the file pariemacs-3.01.txt.
+;; and read the file pariemacs-3.05.txt.
 
 ;; Maintainer (01-March-2003): Olivier Ramare (ramare AT math.univ-lille1.fr).
+;; Maintainer (07-November-2013): Olivier Ramare (ramare AT math.univ-lille1.fr).
 
 ;; KNOWN DEFICIENCIES:
 ;;  -- The fontify part may have troubles with `}'. A `}' followed by
@@ -44,13 +45,13 @@
 ;;                      MENU-BAR ITEM USED IN GP-SCRIPT-MODE
 ;;                      MENU-BAR ITEM USED IN GP-MODE
 
-;; Note: emacs version should be higher than 20.3
+;; Note: emacs version should be higher than 23 (I think !)
 
 (provide 'pari)
 
 ;;; Initial message:
 (message "\n====\nInitial message from pari.el:\n  pari.el loads in three parts in 'gp-script-mode.\n  See variable 'gp-script-menu-map-level.\n  The mode 'gp-mode requires four levels,\n  see variable 'gp-menu-map-level.\n====")
-;; The first "three" is gp-script-menu-mp-level, 
+;; The first "three" is gp-script-menu-mp-level,
 ;; while the latter "four" is gp-menu-map-level.
 
 
@@ -127,7 +128,7 @@ Can be set with `gp-set-prompt' (bound to M-\\ p)")
 :type 'integer   :group 'gp-shell)
 
 (defcustom gp-prompt-for-args nil
-  "*A non-nil value makes M-x gp act like C-u M-x gp, 
+  "*A non-nil value makes M-x gp act like C-u M-x gp,
 ie prompt for the command line arguments."
 :type 'boolean   :group 'gp-shell)
 
@@ -234,9 +235,9 @@ See also `gp-worryp'.")
 
   (if (string-match "XEmacs" emacs-version)
       (progn
-	(modify-syntax-entry ?\n ">b"  gp-syntax-table)
-	;; Give CR the same syntax as newline, for selective-display
-	(modify-syntax-entry ?\^m ">b" gp-syntax-table))
+        (modify-syntax-entry ?\n ">b"  gp-syntax-table)
+        ;; Give CR the same syntax as newline, for selective-display
+        (modify-syntax-entry ?\^m ">b" gp-syntax-table))
     (modify-syntax-entry ?\n "> b"  gp-syntax-table)
     ;; Give CR the same syntax as newline, for selective-display
     (modify-syntax-entry ?\^m "> b" gp-syntax-table)))
@@ -348,7 +349,7 @@ the GP-menu-map.
 pari-help is in fact loaded if present just after level 1.")
 
 (defvar pari-menu-bar-update-hook nil)
-;; this is to avoid using menu-bar-update-hook which is run 
+;; this is to avoid using menu-bar-update-hook which is run
 ;; very often. We run gp-menu-bar-update-hook only when
 ;; the mode (gp or gp-script) is started.
 
@@ -368,7 +369,7 @@ regardless of where in the line point is when the TAB command is used."
 (defun gp-set-and-recompute-indentation (sym val)
   (set sym val)
   (save-current-buffer
-   (mapcar 
+   (mapcar
     (lambda (bf)
       (set-buffer bf)
       (when (eq major-mode 'gp-script-mode)
@@ -546,12 +547,12 @@ The following bindings are available:
        (imenu-add-to-menubar "GP-functions")))
 
 (defun gp-clear-temp-files nil
-  "Remove temporary files that may have been created" 
+  "Remove temporary files that may have been created"
    (if (file-exists-p gp-temp-file)
-       (progn (delete-file gp-temp-file) 
+       (progn (delete-file gp-temp-file)
               (message (gp-messager 2) gp-temp-file)))
-   (if (file-exists-p gp-el-temp-file) 
-       (progn (delete-file gp-el-temp-file) 
+   (if (file-exists-p gp-el-temp-file)
+       (progn (delete-file gp-el-temp-file)
               (message (gp-messager 2) gp-el-temp-file))))
 
 (defun gp-save-setting-kill-emacs nil
@@ -566,13 +567,13 @@ The following bindings are available:
            (save-excursion (re-search-backward gp-prompt-pattern nil t)))
       (let ((where (- (point) (match-end 0))) last-prompt)
         (kill-region (save-excursion
-		       (goto-char (point-max))
-		       (re-search-backward gp-prompt-pattern nil t)
-		       (setq last-prompt (match-end 0))) (point-max))
-	(message (gp-messager 87))
+                       (goto-char (point-max))
+                       (re-search-backward gp-prompt-pattern nil t)
+                       (setq last-prompt (match-end 0))) (point-max))
+        (message (gp-messager 87))
         (gp-copy-input)
-	(goto-char (+ where last-prompt))
-	t)
+        (goto-char (+ where last-prompt))
+        t)
     nil))
 
 (defun gp-beginning-of-line nil
@@ -716,7 +717,7 @@ The variable OPTION is
   -- gp-show-help which is similar to gp-beginning for the help buffer
                   except that we do not erase the content of this buffer.
   -- nil when it is the end of a call.
-The variable MY-BUFFER-NAME is one of 
+The variable MY-BUFFER-NAME is one of
 \"*PARI*\"  \"*gp-help*\" \"*gp-menu*\". "
 
   (cond ((and (string= my-buffer-name "*PARI*")
@@ -725,7 +726,7 @@ The variable MY-BUFFER-NAME is one of
          ;; We go to *PARI* and a window already exists with this buffer.
          (gp-store-wind-conf)
          (select-window (get-buffer-window "*PARI*")))
-        
+
         ((and (string= my-buffer-name "*PARI*")
               (eq option 'gp-beginning)
               (not (get-buffer-window "*PARI*")))
@@ -927,14 +928,14 @@ PROCESS defaults to gp-process."
         ;(print (list "gp-wait-for-output:"  (point-max)))
         (if (or
              ;; Following lines are required for the \q command:
-             (not (and (processp process) 
+             (not (and (processp process)
                        (eq 'run (process-status process))))
              (save-excursion
                (if (re-search-backward gp-prompt-pattern point-init t)
                    t ;(= (match-end 0) (point-max))
                  nil)))
             ;; If gp is not running, or the prompt has appeared, stop.
-            (progn 
+            (progn
               ;(print (list "gp-wait-for-output:" (match-end 0) (point-max)))
               (or nomessage (message (gp-messager 6)))
               (setq notdone nil))
@@ -985,7 +986,7 @@ The answer is t if success, and nil otherwise."
            (concat
              gp-file-name " -s " (number-to-string gp-stack-size)
                           " -p " (number-to-string gp-prime-limit)
-	     " -emacs"  ; -emacs requested by gp2.
+             (concat " " gp-flag-for-emacs)
              )))
 
 ;; Insert the command line string into the *PARI* buffer (for reference)
@@ -994,6 +995,8 @@ The answer is t if success, and nil otherwise."
       (setq gp-process (gp-get-shell "pari" "*PARI*" gp-cmd))
 ;; Clean up when the gp process has finished.
     (set-process-sentinel gp-process (function gp-sentinel)))
+;; Extract lisp command for tooltips:
+    ;(set-process-filter gp-process (function gp-output-raw-filter))
     ;; We should run the hook as the prompt may have
     ;; been changed in the .gprc:
     (run-hooks 'pari-mode-hook)
@@ -1006,6 +1009,34 @@ The answer is t if success, and nil otherwise."
     (setq mode-line-process '(": %s"))
     (if (memq (process-status gp-process) '(signal exit))
         (setq gp-process nil) t))))
+
+(defun gp-output-raw-filter (the-process the-string)
+  (if nil ;gp-should-wait-for-outputp
+      ;; We do not treat outputs when gp-should-wait-for-outputp is t:
+      (progn
+        (set-buffer "*PARI*")
+        (insert the-string))
+    ;; We try the following approach: we believe that
+    ;; the line containing "/*@" and its closing "*/"
+    ;; are one a single output string.
+    (let* ((beg (string-match "/*@" the-string))
+           end (before-string "") (after-string the-string))
+      (when beg
+        (setq end (string-match "*/" the-string (+ 3 beg))
+              before-string (substring the-string 0 beg )
+              after-string "")
+        (if end
+            (progn
+              (setq after-string (substring the-string (+ 2 end) nil))
+              (eval (read (substring the-string (+ 3 beg) end)))
+              )
+          ;; The end was not here!!!!
+          ))
+      ;; print what is outside:
+      ;(message [before-string "+" after-string "+" the-string])
+      (set-buffer "*PARI*")
+      (insert before-string after-string))
+    ))
 
 (defun gp nil
   "
@@ -1043,6 +1074,8 @@ written in gp-temp-directory, but GP is run in the current directory."
    (set-marker (process-mark gp-process) (point))
    (gp-send-input))
 
+;(defalias 'read-input 'read-string)
+
 (defun gp-read-input (prompt default sep flag)
   "If flag is non-nil, reads string (if string is \"\" uses default).
 Else, if flag is nil, set string to default.
@@ -1052,14 +1085,14 @@ As a special case, if string is \" \", return \"\"."
   (let ((string
     (if flag
 ;; If flag is non-nil prompt for input from mini-buffer.
-      (read-input ;; obsolete since emacs 22.1 but an alias still exists!
+      (read-string ;; Old : read-input obsolete since emacs 22.1 but an alias still exists!
         (concat prompt " (Default "default") "))
 ;; Else use the default string.
         default)))
 
     (if (string-equal string "")
-      (if (string-equal default "") 
-         ""                     ;; If string and default both "": 
+      (if (string-equal default "")
+         ""                     ;; If string and default both "":
          (concat sep default))  ;; If string "" and default is non empty:
       (if (string-equal string " ")
         ""                      ;; If string is a space:
@@ -1085,7 +1118,7 @@ As a special case, if string is \" \", return \"\"."
                            '(gp-mode-output t)))
     (when beg-of-prompt
       (goto-char (match-end 0)))))
-    
+
 (defun gp-output-filter ()
   (let ((wind (selected-window))
         (errp (save-excursion
@@ -1093,29 +1126,29 @@ As a special case, if string is \" \", return \"\"."
                 (looking-at "^  \\*\\*\\*  \\|^Unknown function"))))
 
     (gp-set-output-property)
-    
+
     (if errp
         (progn
-	  (let ((copy (buffer-substring-no-properties (1+ gp-input-end)
+          (let ((copy (buffer-substring-no-properties (1+ gp-input-end)
                         (progn
                          (goto-char (point-max)) ;; We should already be there!
                          ;; Remove last prompt line ...
-	                 (beginning-of-line)
+                         (beginning-of-line)
                          ;; and final empty lines:
                          (skip-chars-backward " \t\n")
                          (point)))))
             (delete-region gp-input-end (point-max))
             (gp-store-wind-conf)
             (other-window 1)
-	    (split-window-vertically)
+            (split-window-vertically)
             ;(other-window 1)
             (switch-to-buffer (get-buffer-create "*gp-messages*"))
-	    (erase-buffer)
-	    (insert copy)
+            (erase-buffer)
+            (insert copy)
             (shrink-window-if-larger-than-buffer)
-	    (goto-char (point-min))
+            (goto-char (point-min))
             (gp-info-wind-conf)
-	    (select-window wind))))))
+            (select-window wind))))))
 
 (defun gp-special-output-filter nil
   (gp-set-output-property))
@@ -1126,15 +1159,15 @@ As a special case, if string is \" \", return \"\"."
                 (or (looking-at "^  \\*\\*\\*   unexpected character: \\.\\.\\.")
                     (looking-at "^  \\*\\*\\*   expected character: [^\n]*\n  \\*\\*\\*   instead of: ")
                     (looking-at "^  \\*\\*\\*   expected character: [^\n]*\n  \\*\\*\\*   instead of:\n  \\*\\*\\*   \\.\\.\\.")
-                    (looking-at "^  \\*\\*\\*   unknown function or error in formal parameters:\n  \\*\\*\\*   \\.\\.\\.") 
+                    (looking-at "^  \\*\\*\\*   unknown function or error in formal parameters:\n  \\*\\*\\*   \\.\\.\\.")
                     (looking-at "^  \\*\\*\\*   unknown function or error in formal parameters: ")
                     (looking-at "^  \\*\\*\\*   unexpected character: "))
                 )))
 
       (if errp  ;; T if an error has been detected.
-       	(progn
+        (progn
           (goto-char (match-end 0))
-	  (let* (;; the line containing the mistake:
+          (let* (;; the line containing the mistake:
                  (astring (buffer-substring-no-properties (point)
                                             (progn (end-of-line) (point))))
                  ;; how many characters of astring have been sent to
@@ -1209,16 +1242,16 @@ succeeds only every other day..."
                (setq gp-pgrm (buffer-file-name))
                (if (buffer-modified-p) (save-buffer 0))))
          (gp)  ;; In case a GP-process was not already running, starts one.
-               ;; In any case, switches to buffer "*PARI*". 
+               ;; In any case, switches to buffer "*PARI*".
          (gp-beginning-of-last-line)
          (if (> (point-max) (point))
              ; There are things on the last line
-             (progn 
+             (progn
                (setq message-to-be-delivered
                      (concat (gp-messager 70)
                                 (buffer-substring-no-properties (point) (point-max))))
                (delete-region (point) (point-max))))
-                
+
          (insert (concat "\\r " gp-pgrm))
          (set-marker (process-mark gp-process) (point))
          (gp-send-input)
@@ -1410,7 +1443,7 @@ of the gp program."
    (goto-char gp-input-start)
    (if (re-search-forward "^\\\\\\\\@$" gp-input-end t)
        (setq gp-should-wait-for-outputp nil))
-    
+
    ;; Take care of virtual-newlines:
    (goto-char gp-input-start)
    (while (re-search-forward "[^\\\\]\\(\n\\)" gp-input-end t)
@@ -1460,7 +1493,7 @@ If LOCALP is non nil, then it is assumed the input comes
 from the *PARI* buffer, in which case if this input was a
 `\r '-command, sends the output to `gp-output-filter'.
 If LOCALP is nil, then if a file is being read which is
-currently being displayed, sends the output to `gp-special-output-filter'
+currently being displayed, send the output to `gp-special-output-filter'
 and maybe to `gp-special-on-error-output-filter'.
 
 Sub-functions are `gp-treat-special-inputp' and `gp-copy-input'
@@ -1475,10 +1508,10 @@ with whom it shares the variables:
   (if gp-complete-expression
   ;; If it is a complete expression do this:
       (progn
-	(gp-store-line (buffer-substring-no-properties
-			(save-excursion 
-			  (re-search-backward gp-prompt-pattern nil t)
-			  (match-end 0)) (point-max)))
+        (gp-store-line (buffer-substring-no-properties
+                        (save-excursion
+                          (re-search-backward gp-prompt-pattern nil t)
+                          (match-end 0)) (point-max)))
         (print gp-hist-commands)
         (insert "\n")
         (gp-input-filter)
@@ -1559,7 +1592,7 @@ With nil, it is 'gp-quiet-meta-cmd."
             (gp-window-manager "*gp-help*" window-option)
             (set-buffer (get-buffer-create "*gp-help*"))
             (erase-buffer))
-            
+
         (insert copy)
         (beginning-of-line)  ;; We remove the last prompt line.
         (delete-region (point) (point-max))
@@ -1610,7 +1643,7 @@ With nil, it is 'gp-quiet-meta-cmd."
                        (setq where (point))
                              ;;Options from strftime:
                        (cond ((string= a-char "%") "%")
-                             ((member a-char 
+                             ((member a-char
                                '("C" "d" "e" "H" "I" "k" "l" "m" "M" "S"
                                  "U" "V" "W" "y"))
                               "[0-9][0-9]")
@@ -1669,7 +1702,7 @@ With nil, it is 'gp-quiet-meta-cmd."
     (save-excursion
       (set-buffer "*PARI*")
       (setq cur (point))
-      (if (save-excursion 
+      (if (save-excursion
             (re-search-forward gp-prompt-pattern nil t))
           (setq nb-steps-forward -1)
         ;(print (list "gp-visible-command:" "Yoo"))
@@ -1695,7 +1728,7 @@ With nil, it is 'gp-quiet-meta-cmd."
       (set-buffer my-buffer))
     (print (list "gp-visible-command:" nb-steps-forward))
     (if (>= nb-steps-forward 0)
-        (progn 
+        (progn
           (re-search-forward gp-prompt-pattern nil t)
 
           (if (< nb-steps-forward (- (point-max) (point)))
@@ -1781,8 +1814,8 @@ Prins object %<num> in prettymatrix format."
 
 (defun gp-meta-q ()
   "Send \q to gp. Prompt for confirmation before quiting."
-  (interactive) 
-  (if (y-or-n-p "Quit gp ? ") 
+  (interactive)
+  (if (y-or-n-p "Quit gp ? ")
     (progn
      (set-buffer "*PARI*")
      (goto-char (point-max))
@@ -1794,7 +1827,7 @@ Prins object %<num> in prettymatrix format."
 
 (defun gp-break-long-line nil
   "gp will not accept lines longer than 1024.
-gp-break-long-line breaks current line 
+gp-break-long-line breaks current line
 inserting \ every (frame-width)-5 chars."
   (interactive)
   (let ((length (min (- (frame-width) 5) 250)))
@@ -1884,7 +1917,7 @@ gp-previous-cmd and gp-next-cmd and reciprocally"
           (when (re-search-backward gp-prompt-pattern nil t)
             (let ((inhibit-read-only t))
               (delete-region (1- (point)) where)))))))
-  
+
 (defun gp-electric-behavior (choice)
   "Selects RET/M-RET from `sli-electric-terminate-line'
 to newline and reciprocally"
@@ -1907,7 +1940,7 @@ to newline and reciprocally"
 
 (defconst gp-metakeys-gp-mode-menu
   (list
-  (list (gp-messager 48) 
+  (list (gp-messager 48)
     (vector (gp-messager 49) 'gp-meta-r '(processp gp-process))
     (vector (gp-messager 50) 'gp-meta-w '(processp gp-process))
     gp-separator
@@ -1965,7 +1998,7 @@ to newline and reciprocally"
 
 (defun gp-build-utilities-menu nil ""
   (nconc
-    (list 
+    (list
           (vector (gp-messager 73) 'gp-skip-to-error t))
     (if (eq major-mode 'gp-mode)
         (list
@@ -1974,7 +2007,7 @@ to newline and reciprocally"
          (vector (gp-messager 76) 'gp-remove-last-output t)
          (vector (gp-messager 77) 'gp-remove-last-action t)))
         nil)
-    (list 
+    (list
       (vector (gp-messager 78) 'gp-toggle t ':included '(eq major-mode 'gp-mode))
       (gp-environment-menu))
     ))
@@ -1992,7 +2025,7 @@ to newline and reciprocally"
        "Menu-bar item used under gp-script-mode."
        (append
          (list "GP-script" ':incuded '(eq major-mode 'gp-script-mode))
-         (gp-build-main-cmds-menu)                       gp-separator 
+         (gp-build-main-cmds-menu)                       gp-separator
          gp-metakeys-gp-script-mode-menu                 gp-separator
          (gp-build-utilities-menu)                       gp-separator
          (list (vector (gp-messager 71) 'gp-restore-wind-conf
