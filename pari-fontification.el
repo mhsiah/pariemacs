@@ -1,6 +1,6 @@
 ;; pari-fontification.el -- fontification functions.
 
-;; Copyright (C) 1997-2009  The PARI group.
+;; Copyright (C) 1997-2014  The PARI group.
 
 ;; This file is part of the PARIEMACS package.
 
@@ -15,7 +15,7 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;; To be used with pari.el version 3.00 or higher.
-;; pari-fontification.el version 3.03
+;; pari-fontification.el version 3.10
 
 ;; See README for more details.
 
@@ -28,7 +28,7 @@
 (provide 'pari-fontification)
 
 ;; Provides: variable:  gp-fontification-keywords
-;;           functions: gp-update-fontification, gp-find-global-var, 
+;;           functions: gp-update-fontification, gp-find-global-var,
 
 ;; Of pari.el, it uses:
 ;;     functions: gp-window-manager, gp-store-wind-conf
@@ -95,7 +95,7 @@ Partly modified internally"
   (list
     '("\\<\\(buffersize\\|co\\(lors\\|mpatible\\)\\|debug\\(mem\\)?\\|echo\\|format\\|h\\(elp\\|size\\)\\|logfile\\|output\\|p\\(a\\(risize\\|th\\)\\|r\\(imelimit\\|ompt\\)\\|sfile\\)\\|\\(real\\|series\\)precision\\|simplify\\|strictmatch\\|timer\\)\\>"  (1 gp-default-keywords))
     '("\\<\\(return\\|break\\|next\\|if\\|until\\|while\\|sum\\|for\\(div\\|prime\\|step\\|vec\\|subgroup\\)?\\)\\>" (1 gp-control-statement))
-    '("\\<\\(Strprintf\\|a\\(?:ddhelp\\|l\\(?:arm\\|ias\\|locatemem\\)\\|pply\\)\\|break\\|default\\|e\\(?:rror\\|xtern\\)\\|for\\(?:div\\|ell\\|prime\\|s\\(?:\\(?:te\\|ubgrou\\)p\\)\\|vec\\)?\\|g\\(?:et\\(?:heap\\|rand\\|stack\\|time\\)\\|lobal\\)\\|i\\(?:f\\|nput\\)\\|kill\\|local\\|my\\|next\\|print\\(?:tex\\|[1f]\\)?\\|quit\\|return\\|s\\(?:e\\(?:lect\\|trand\\)\\|ystem\\)\\|t\\(?:rap\\|ype\\)\\|until\\|version\\|w\\(?:arning\\|h\\(?:atnow\\|ile\\)\\|rite\\(?:1\\|bin\\|tex\\)?\\)\\)\\>" (1 gp-control-statement))
+    '("\\<\\(Strprintf\\|a\\(?:ddhelp\\|l\\(?:arm\\|ias\\|locatemem\\)\\|pply\\)\\|break\\|default\\|e\\(?:rror\\|xtern\\)\\|for\\(?:div\\|ell\\|prime\\|s\\(?:\\(?:te\\|ubgrou\\)p\\)\\|vec\\)?\\|g\\(?:et\\(?:heap\\|rand\\|stack\\|time\\)\\|lobal\\)\\|i\\(?:f\\|n\\(?:line\\|put\\)\\)\\|kill\\|local\\|my\\|next\\|p\\(?:ar\\(?:apply\\|for\\|sum\\|vector\\)\\|rint\\(?:tex\\|[1f]\\)?\\)\\|quit\\|return\\|s\\(?:e\\(?:lect\\|trand\\)\\|\\(?:u\\|yste\\)m\\)\\|t\\(?:rap\\|ype\\)\\|until\\|ve\\(?:ctor\\|rsion\\)\\|w\\(?:arning\\|h\\(?:atnow\\|ile\\)\\|rite\\(?:1\\|bin\\|tex\\)?\\)\\)\\>" (1 gp-control-statement))
     '("\\<\\(default\\)(" (1 gp-default-set))
     '("\\<\\(time = \\)[0-9][hmn,0-9 ]* ms\." (1 gp-time-word))
     '("^ *\\\\[a-z].*$" . gp-default-set)
@@ -105,7 +105,9 @@ Partly modified internally"
     )
   "Common keywords to be fontified in gp- and gp-script- mode.")
 
-;(print (regexp-opt '("Strprintf" "addhelp" "alarm" "alias" "allocatemem" "apply" "break" "default" "error" "extern" "for" "fordiv" "forell" "forprime" "forstep" "forsubgroup" "forvec" "getheap" "getrand" "getstack" "gettime" "global" "if" "input" "kill" "local" "my" "next" "print" "print1" "printf" "printtex" "quit" "return" "select" "setrand" "system" "trap" "type" "until" "version"  "warning" "whatnow" "while" "write" "write1" "writebin"   "writetex")   'word))
+;(print (regexp-opt '("Strprintf" "addhelp" "alarm" "alias" "allocatemem" "apply" "break" "default" "error" "extern" "for" "fordiv" "forell" "forprime" "forstep" "forsubgroup" "forvec" "getheap" "getrand" "getstack" "gettime" "global" "if" "input" "kill" "local" "my" "next" "print" "print1" "printf" "printtex" "quit" "return" "select" "setrand" "system" "trap" "type" "until" "version"  "warning" "whatnow" "while" "write" "write1" "writebin"   "writetex" "apply" "parapply" "parfor" "parsum" "sum" "vector" "parvector" "inline")   'word))
+
+;(print (regexp-opt '("Strprintf" "addhelp" "alarm" "alias" "allocatemem" "apply" "break" "default" "error" "extern" "for" "fordiv" "forell" "forprime" "forstep" "forsubgroup" "forvec" "getheap" "getrand" "getstack" "gettime" "global" "if" "input" "kill" "local" "my" "next" "print" "print1" "printf" "printtex" "quit" "return" "select" "setrand" "system" "trap" "type" "until" "version"  "warning" "whatnow" "while" "write" "write1" "writebin"   "writetex" "parapply" "parfor" "parsum" "sum" "vector" "parvector")   'word))
 
 
 (defvar gp-fontification-keywords
@@ -177,9 +179,9 @@ Default is font-lock-keywords.")
   (defface gp-prompt
     '((((class grayscale) (background light)) (:foreground "LightGray" :bold t))
       (((class grayscale) (background dark)) (:foreground "DimGray" :bold t))
-      (((class color) (background light)) (:foreground "Orchid" :background "LightCyan" 
+      (((class color) (background light)) (:foreground "Orchid" :background "LightCyan"
                                                        :bold t))
-      (((class color) (background dark)) (:foreground "LightSteelBlue" :background "Orchid" 
+      (((class color) (background dark)) (:foreground "LightSteelBlue" :background "Orchid"
                                                       :bold t))
       (t (:bold t)))
     "*Face used in GP to highlight prompt.")
@@ -207,8 +209,8 @@ Default is font-lock-keywords.")
   (defface gp-timer
     '((((class grayscale) (background light)) (:foreground "DimGray" :italic t))
       (((class grayscale) (background dark)) (:foreground "LightGray" :italic t))
-      (((class color) (background light)) (:foreground "tomato" 
-                                                       :background "snow1" 
+      (((class color) (background light)) (:foreground "tomato"
+                                                       :background "snow1"
                                                        :italic t))
       (((class color) (background dark)) (:foreground "OrangeRed" :background "Orchid"
                                                       :italic t))
@@ -252,6 +254,7 @@ Default is font-lock-keywords.")
 (defun gp-in-commentp (safe-place)
   ;; safe-place is a value of point before (point)
   ;; and where we know not to be inside a comment.
+  ;; Embedded comments are handled properly.
   (save-excursion
     (let ((p (point)) (profondeur 0))
       (beginning-of-line)
@@ -278,7 +281,7 @@ LIMIT is not used."
 ;    (while (looking-at (concat comment-start-skip
 ;                               "\\|[ \\|\t\\|\n]\\|{\\([^}]}\\|}[^\n]\\)*\n\\|\\<[a-zA-Z]\\w*([^)]*) *={\\([^}]\\|}[^\n]\\)*}\n\\|\\<[a-zA-Z]\\w*([^)]*) *=\\([^=\\\\\"]\\|\\\\[ \t]*\\(\\\\\\\\.*$\\|/\\*\\([^\\*]\\|\\*[^/]\\)*\\*/\\)?\n\\|\"\\([^\"]*\\|\\\\\"\\)*\"\\)\\([^\\\\\n\"]\\|\"\\([^\"]*\\|\\\\\"\\)*\"\\|\\\\[ \t]*\\(\\\\\\\\.*$\\|/\\*\\([^\\*]\\|\\*[^/]\\)*\\*/\\)?\n\\)*\n\\|\\<[a-zA-Z]\\w*([^)]*)[;\n]"))
   ;; We look at a single line comment, or a long comment,
-  ;; or a space/tab/newline character, 
+  ;; or a space/tab/newline character,
   ;; or a function definition of the type fun(var)={foo},
   ;; or a function definition of the type {fun(var)= foo},
   ;; (that is, the final } is immediately followed by a \n or by ;\n)
@@ -290,7 +293,7 @@ LIMIT is not used."
     (while continue
       (setq continue nil)
       (skip-chars-forward " \t\n")
-      (while 
+      (while
           (or
            (looking-at (concat comment-start-skip
                                "\\|\\<[a-zA-Z]\\w*([^)]*) *=\\([^=\\\\\"]\\|\\\\[ \t]*\\(\\\\\\\\.*$\\|/\\*\\([^\\*]\\|\\*[^/]\\)*\\*/\\)?\n\\|\"\\([^\"]*\\|\\\\\"\\)*\"\\)\\([^\\\\\n\"]\\|\"\\([^\"]*\\|\\\\\"\\)*\"\\|\\\\[ \t]*\\(\\\\\\\\.*$\\|/\\*\\([^\\*]\\|\\*[^/]\\)*\\*/\\)?\n\\)*\n"))
@@ -299,7 +302,7 @@ LIMIT is not used."
            (looking-at "\\<[a-zA-Z]\\w*([^)]*)[;\n]")
            )
         ;; We look at a single line comment, or a long comment,
-        ;; or a space/tab/newline character, 
+        ;; or a space/tab/newline character,
         ;; or a function definition of the type fun(var)={foo},
         ;; or a function definition of the type {fun(var)= foo},
         ;; (that is, the final } is immediately followed by a \n)
@@ -343,7 +346,7 @@ Answer nil when no global-variable is found"
 of \\ and without the text-property 'gp-mode-output.
 Move point after this point. Nil if no such place before LIM."
   ;; Inspired from fontify-string-find in hilit19.el.
-  (let (beg aux (en nil)) 
+  (let (beg aux (en nil))
     (while (and (setq beg (search-forward "\"" lim t))
                 ;(print (list "Beg" beg (text-property-any (1- beg) beg 'gp-mode-output t)))
                 (text-property-any (1- beg) beg 'gp-mode-output t)
@@ -401,11 +404,11 @@ Move point after this point. Nil if no such place before LIM."
             (setq s (point))
             (insert (car colors-list))
             (indent-to 20)
-            (put-text-property s (point) 'face 
+            (put-text-property s (point) 'face
                                (cons 'background-color (car colors-list)))
             (setq s (point))
             (insert "  " (car colors-list) "\n")
-            (put-text-property s (point) 'face 
+            (put-text-property s (point) 'face
                                (cons 'foreground-color (car colors-list)))
             (setq colors-list (cdr colors-list)))
           (goto-char (point-min))
@@ -425,7 +428,7 @@ Move point after this point. Nil if no such place before LIM."
      (append
       (if (eq major-mode 'gp-script-mode)
           (list (vector (gp-messager 45) 'gp-turn-on-lazy-font-lock
-                        ':active t ':key-sequence nil 
+                        ':active t ':key-sequence nil
                         ':included '(and gp-fontifyp (eq major-mode gp-script-mode)))) nil)
       (list (vector (gp-messager 44) 'gp-update-fontification
                     ':active t ':included: 'gp-fontifyp)
@@ -437,10 +440,10 @@ Move point after this point. Nil if no such place before LIM."
                     ':key-sequence nil ':included: 'gp-fontifyp)))))
 
 (add-hook 'pari-menu-bar-update-hook
-  '(lambda nil 
+  '(lambda nil
      (when (and gp-menu-barp
                 (or (and (eq major-mode 'gp-mode) GP-menu-map (= gp-menu-map-level 2))
-                    (and (eq major-mode 'gp-script-mode) 
+                    (and (eq major-mode 'gp-script-mode)
                          GP-script-menu-map(= gp-script-menu-map-level 2) )))
        (let ((sentences (if (and (require 'pari-completion) (featurep 'pari-completion))
                     ;; (gp-messager 72) [Complete] is defined there.
@@ -487,4 +490,3 @@ Move point after this point. Nil if no such place before LIM."
      ))
 
 ;; pari-fontification.el ends here.
-

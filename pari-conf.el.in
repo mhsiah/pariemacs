@@ -16,7 +16,7 @@
 
 ;; Maintainer (01-March-2003): Olivier Ramare (ramare AT math.univ-lille1.fr).
 ;; To be used with pari.el version 3.05 or higher.
-;; Version: 3.06
+;; Version: 3.09
 
 (provide 'pari-conf)
 ;; Set the following constants for your site:
@@ -32,6 +32,7 @@
   "The pariemacs file")
 
 (defconst gp-flag-for-emacs
-;;  "--emacs"  ;; if version >= 2.6.1
-  "-emacs"   ;; if version <= 2.6.0
-  "gp version > 2.6.1 uses the flag --emacs instead of the earlier -emacs")
+  "--emacs"  ;; if version >= 2.3.0
+;;  "-emacs"   ;; if version < 2.3.0
+  "gp version >= 2.3.0 uses the flag --emacs instead of the earlier -emacs"
+)

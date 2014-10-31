@@ -1,6 +1,6 @@
-Latest version handled : 3.03
+Latest version handled : 3.10
 
-Copyright (C) 1997-2009 The PARI Group, Bordeaux.
+Copyright (C) 1997-2014 The PARI Group, Bordeaux.
 
 PARIEMACS is part of the PARI/GP system, http://pari.math.u-bordeaux.fr/
 
@@ -18,10 +18,10 @@ been called pari-mode; the name pariemacs is now preferred and will
 maybe soon be called pari-emacs :-).
 
 This is to be used with PARI/GP version 2.4.1 at least and emacs
-version at least 21. It works with the emacs 22 series also, but see
-the end of this file if you use both. This version has not been tested
-with XEmacs and mishaps are likely to occur, but you are welcome to
-mention them.
+version at least 21. It works with the emacs 22/23 and 24 series also,
+but see the end of this file if you use both. This version has not
+been tested with XEmacs and mishaps are likely to occur, but you are
+welcome to mention them.
 
 Content of this file:
 ---------------------
@@ -44,18 +44,27 @@ Content of this file:
 INSTALLATION.
 =============
 
-PARIEMACS consists of 12 files: README (this file, for information
-only), CHANGES, pari.el, pari-conf.el that contains system dependent
-variables and seven additional files that can be looked upon as
+PARIEMACS consists of 15 files: README (this file, for information
+only), the file pariemacs-3.09.txt which is an exact copy of README
+and is here for users used to this other name, CHANGES, COPYING,
+pari.el, pari-conf.el that contains system dependent variables,
+pari.cfg-default that helps create pari-conf.el from pari-conf.el.in
+when you did not compile pari/gp by yourself,
+and seven additional files that can be looked upon as
 modules. In particular, they may be missing without altering the core
 behaviour.
 
 You can use the Makefile attached to install this files.  This means
 you only have to run:
-     tar zxvf pariemacs-3.05.tar.gz
-     cd pariemacs-3.05/
+     cd pariemacs-3.09/
+     tar zxvf pariemacs-3.09.tar.gz
      make
-You may need to edit the file Makefile in the pariemacs-3.05/
+--
+(1) Note that if you extract the files from the menu of your file navigator,
+it will most probably create a directory pariemacs-3.09 ... within
+the one you just created! No worry, simply go down to this directory
+and proceed.
+(2) You may need to edit the file Makefile in the pariemacs-3.09/
 directory to suit your installation: in Debian
 
    PARI_CFG=/usr/lib/pari/pari.cfg
@@ -64,7 +73,11 @@ for instance. You may also want to change the installation directory:
 
    INSTALL=/usr/local/share/emacs/site-lisp/pari
 
-This will first write the file pari-conf.el from pari-conf.el.in.
+The file /usr/lib/pari/pari.cfg is created when you compile pari/gp
+by yourself,  and it may be missing. So a file "pari.cfg-default" is
+provided, which you should edit to suit your need.
+--
+The make command will first write the file pari-conf.el from pari-conf.el.in.
 This file contains the names and paths to the executables and you may
 need to edit it if the automatic detection fails.  Then files are
 byte-compiled and installed.  If the installation directory is not in
@@ -188,8 +201,13 @@ KEY      LISP-NAME             DESCRIPTION
 ===      =========             ===========
 M-x gp   gp                    Start a gp session with default parameters.
 C-u M-o                        Quit editing a completion file.
-C-c C-e  sli-maid              Closes constructs for you.
-                               In fact it'll close parenthesis ...
+C-c C-c  gp-maid               Do the next obvious thing, i.e:
+                               first tries to complete expressions from
+                                     the bottom of the file
+                               second ask to evaluate the script.
+C-c C-e  gp-run-gp             Send the script to gp.
+C-c C-f  gp-tutor              Closes all constructs. Does not know about
+                               comas and number of required arguments, though.
 The two keys RET and M-RET are special. Together they command the introduction
 of a newline, with some indentation. The actions are as follows:
          newline               Insert a newline, but do *not* redo
@@ -751,4 +769,4 @@ with the package; see the file 'COPYING'. If not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 ===========================================================================
-14-10-2009 version 3.03 (This file refers to pariemacs version 3.03)
+9-09-2014 version 3.10 (This file refers to pariemacs version 3.10)

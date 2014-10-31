@@ -1,6 +1,6 @@
 ;; pari-history.el -- history functions.
 
-;; Copyright (C) 1997-2009  The PARI group.
+;; Copyright (C) 1997-2014  The PARI group.
 
 ;; This file is part of the PARIEMACS package.
 
@@ -15,7 +15,7 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;; To be used with pari.el version 3.00 or higher
-;; pari-history.el version 3.03
+;; pari-history.el version 3.08
 
 ;; See README for more details.
 
