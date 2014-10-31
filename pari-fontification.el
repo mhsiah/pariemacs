@@ -1,6 +1,6 @@
 ;; pari-fontification.el -- fontification functions.
 
-;; Copyright (C) 1997-2009  The PARI group.
+;; Copyright (C) 1997-2014  The PARI group.
 
 ;; This file is part of the PARIEMACS package.
 
@@ -15,7 +15,7 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;; To be used with pari.el version 3.00 or higher.
-;; pari-fontification.el version 3.03
+;; pari-fontification.el version 3.10
 
 ;; See README for more details.
 
@@ -95,7 +95,7 @@ Partly modified internally"
   (list
     '("\\<\\(buffersize\\|co\\(lors\\|mpatible\\)\\|debug\\(mem\\)?\\|echo\\|format\\|h\\(elp\\|size\\)\\|logfile\\|output\\|p\\(a\\(risize\\|th\\)\\|r\\(imelimit\\|ompt\\)\\|sfile\\)\\|\\(real\\|series\\)precision\\|simplify\\|strictmatch\\|timer\\)\\>"  (1 gp-default-keywords))
     '("\\<\\(return\\|break\\|next\\|if\\|until\\|while\\|sum\\|for\\(div\\|prime\\|step\\|vec\\|subgroup\\)?\\)\\>" (1 gp-control-statement))
-    '("\\<\\(Strprintf\\|a\\(?:ddhelp\\|l\\(?:arm\\|ias\\|locatemem\\)\\|pply\\)\\|break\\|default\\|e\\(?:rror\\|xtern\\)\\|for\\(?:div\\|ell\\|prime\\|s\\(?:\\(?:te\\|ubgrou\\)p\\)\\|vec\\)?\\|g\\(?:et\\(?:heap\\|rand\\|stack\\|time\\)\\|lobal\\)\\|i\\(?:f\\|nput\\)\\|kill\\|local\\|my\\|next\\|print\\(?:tex\\|[1f]\\)?\\|quit\\|return\\|s\\(?:e\\(?:lect\\|trand\\)\\|ystem\\)\\|t\\(?:rap\\|ype\\)\\|until\\|version\\|w\\(?:arning\\|h\\(?:atnow\\|ile\\)\\|rite\\(?:1\\|bin\\|tex\\)?\\)\\)\\>" (1 gp-control-statement))
+    '("\\<\\(Strprintf\\|a\\(?:ddhelp\\|l\\(?:arm\\|ias\\|locatemem\\)\\|pply\\)\\|break\\|default\\|e\\(?:rror\\|xtern\\)\\|for\\(?:div\\|ell\\|prime\\|s\\(?:\\(?:te\\|ubgrou\\)p\\)\\|vec\\)?\\|g\\(?:et\\(?:heap\\|rand\\|stack\\|time\\)\\|lobal\\)\\|i\\(?:f\\|n\\(?:line\\|put\\)\\)\\|kill\\|local\\|my\\|next\\|p\\(?:ar\\(?:apply\\|for\\|sum\\|vector\\)\\|rint\\(?:tex\\|[1f]\\)?\\)\\|quit\\|return\\|s\\(?:e\\(?:lect\\|trand\\)\\|\\(?:u\\|yste\\)m\\)\\|t\\(?:rap\\|ype\\)\\|until\\|ve\\(?:ctor\\|rsion\\)\\|w\\(?:arning\\|h\\(?:atnow\\|ile\\)\\|rite\\(?:1\\|bin\\|tex\\)?\\)\\)\\>" (1 gp-control-statement))
     '("\\<\\(default\\)(" (1 gp-default-set))
     '("\\<\\(time = \\)[0-9][hmn,0-9 ]* ms\." (1 gp-time-word))
     '("^ *\\\\[a-z].*$" . gp-default-set)
@@ -105,7 +105,9 @@ Partly modified internally"
     )
   "Common keywords to be fontified in gp- and gp-script- mode.")
 
-;(print (regexp-opt '("Strprintf" "addhelp" "alarm" "alias" "allocatemem" "apply" "break" "default" "error" "extern" "for" "fordiv" "forell" "forprime" "forstep" "forsubgroup" "forvec" "getheap" "getrand" "getstack" "gettime" "global" "if" "input" "kill" "local" "my" "next" "print" "print1" "printf" "printtex" "quit" "return" "select" "setrand" "system" "trap" "type" "until" "version"  "warning" "whatnow" "while" "write" "write1" "writebin"   "writetex")   'word))
+;(print (regexp-opt '("Strprintf" "addhelp" "alarm" "alias" "allocatemem" "apply" "break" "default" "error" "extern" "for" "fordiv" "forell" "forprime" "forstep" "forsubgroup" "forvec" "getheap" "getrand" "getstack" "gettime" "global" "if" "input" "kill" "local" "my" "next" "print" "print1" "printf" "printtex" "quit" "return" "select" "setrand" "system" "trap" "type" "until" "version"  "warning" "whatnow" "while" "write" "write1" "writebin"   "writetex" "apply" "parapply" "parfor" "parsum" "sum" "vector" "parvector" "inline")   'word))
+
+;(print (regexp-opt '("Strprintf" "addhelp" "alarm" "alias" "allocatemem" "apply" "break" "default" "error" "extern" "for" "fordiv" "forell" "forprime" "forstep" "forsubgroup" "forvec" "getheap" "getrand" "getstack" "gettime" "global" "if" "input" "kill" "local" "my" "next" "print" "print1" "printf" "printtex" "quit" "return" "select" "setrand" "system" "trap" "type" "until" "version"  "warning" "whatnow" "while" "write" "write1" "writebin"   "writetex" "parapply" "parfor" "parsum" "sum" "vector" "parvector")   'word))
 
 
 (defvar gp-fontification-keywords
@@ -252,6 +254,7 @@ Default is font-lock-keywords.")
 (defun gp-in-commentp (safe-place)
   ;; safe-place is a value of point before (point)
   ;; and where we know not to be inside a comment.
+  ;; Embedded comments are handled properly.
   (save-excursion
     (let ((p (point)) (profondeur 0))
       (beginning-of-line)
@@ -487,4 +490,3 @@ Move point after this point. Nil if no such place before LIM."
      ))
 
 ;; pari-fontification.el ends here.
-

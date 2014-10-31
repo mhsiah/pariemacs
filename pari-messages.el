@@ -121,6 +121,14 @@
         "Commande suivante" ;; no 90
         "Changer les touches"              ;; no 91
         "Echange des fonctions des touches up/C-up et down/C-down." ;; no 92
+        "Guide des fonctions predefinies" ;; no 93
+        "a propos de ..." ;; no 94
+        "sur la fonction ..." ;; no 95
+        "Manuel" ;; no 96
+        "Tutoriel" ;; no 97
+        "Faire ce que doit !" ;; no 98
+        "Fermeture !" ;; no 99
+        "Aucune idee de ce qu'il faut faire, desole ..." ;; no 100
         ))
      (english .
        ("Using default choice for completion"            ;; no 1
@@ -165,7 +173,7 @@
         "Use face:"     ;; no 40
         "Called with: %s\n\n"       ;; no 41 
         "New prompt..."      ;; no 42
-        "Colors"        ;; no 43                  http://www.local.attac.org/petition/
+        "Colors"        ;; no 43             
         "Update"        ;; no 44 
         "Automatic"          ;; no 45 
         "Hilit Switch"  ;; no 46 
@@ -215,6 +223,14 @@
         "Next command" ;; no 90
         "Change keys"              ;; no 91
         "Exchange of keys C-up and down/C-down." ;; no 92
+        "Browsing through predefined functions" ;; no 93
+        "on Subject..." ;; no 94
+        "on Function..." ;; no 95
+        "Manual" ;; no 96
+        "Tutorial" ;; no 97
+        "Next obvious thing!" ;; no 98
+        "Closing time!" ;; no 99
+        "I don't know what to do, sorry ..." ;; no 100
         ))
      (deutsch  .
        ("Using default choice for completion"         ;; no 1
@@ -309,14 +325,19 @@
         "Next command" ;; no 90
         "Change keys"              ;; no 91
         "Exchange of keys C-up and down/C-down." ;; no 92
+        "Browsing through predefined functions" ;; no 93
+        "on Subject..." ;; no 94
+        "on Function..." ;; no 95
+        "Manual" ;; no 96
+        "Tutorial" ;; no 97
+        "Next obvious thing!" ;; no 98
+        "Closing time!" ;; no 99
+        "I don't know what to do, sorry ..." ;; no 100
 ))))
 
 ;; The only function used outside :
 
 (defun gp-messager (msg-number)
-  "Return message number MSG-NUMBER from the list of messages in 
-GP-MESSAGE-LIST corresponding to the current language as specified
-in GP-LANGUAGE."
   (eval (nth msg-number (assq gp-language gp-messages-list))))
 
 ;; pari-messages.el ends here.

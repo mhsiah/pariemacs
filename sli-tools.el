@@ -1,6 +1,6 @@
 ;; sli-tools.el --- structured languages indentation package
 
-;; Copyright (C) 2000-2007  The PARI group.
+;; Copyright (C) 2000-2014  The PARI group.
 
 ;; This file is part of the PARIEMACS package.
 
@@ -13,7 +13,7 @@
 ;; it, along with the package; see the file 'COPYING'. If not, write
 ;; to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
-;; sli-tools.el version 0.97
+;; sli-tools.el version 0.98
 
 ;; It works out some tools for indentation of structured programs.
 ;; It has been written for mupad.el and pari.el but should apply to
@@ -703,7 +703,7 @@ sli-special-head-offset-alist))
 	    (mapcar
 	     (lambda (ph)
 	       (setq key-lst '())
-	       (mapc
+	       (mapcar
 		(lambda (co)
 		  (when (member (elt co 1) '(head strong end))
 		    (add-to-list 'key-lst (elt co 0))))
@@ -1183,13 +1183,13 @@ nil if point is at beginning of line."
   (save-excursion
     (when (eobp) (forward-char -1))
     (if (re-search-backward sli-safe-place-regexp nil t)
-        (match-end 1) (point-min))))
+        (match-beginning 1) (point-min))))
 
 (defsubst sli-get-safe-forward-place nil
   (save-excursion
     (when (bobp) (forward-char 1))
     (if (re-search-forward sli-safe-place-regexp nil t)
-        (match-beginning 1) (point-max))))
+        (match-end 1) (point-max))))
 
 (defsubst sli-within-long-comment nil
   (let*((aux (sli-get-safe-backward-place))

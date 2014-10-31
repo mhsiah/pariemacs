@@ -1,6 +1,6 @@
 ;; pari-help.el -- documentation fucntions.
 
-;; Copyright (C) 1997-2009  The PARI group.
+;; Copyright (C) 1997-2014  The PARI group.
 
 ;; This file is part of the PARIEMACS package.
 
@@ -15,10 +15,10 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;; To be used with pari.el version 3.00 or higher
-;; pari-help.el version 3.04
+;; pari-help.el version 3.10 (15-Septembre-2014)
 
 ;; See README for more details.
-
+ 
 (provide 'pari-help)
 
 ;; pari.el will use the variable 'gp-c-array-createdp
@@ -28,7 +28,7 @@
 ;; Of pari.el, it uses:
 ;; variables:
 ;;     gp-file-name, gp-version
-;; functions:
+;; functions: 
 ;;     gp-window-manager, gp-wait-for-output, gp-get-shell,
 ;;     gp-background, gp-meta-cmd-general,
 ;;     gp-info-wind-conf, gp-add-symbol, gp-backward-wind-conf, gp-show-help
@@ -276,7 +276,7 @@ the values of `gp-menu-start-simple', `gp-menu-end-simple'."
         (or (= wherex 1) (insert "\n")))
       (message (gp-messager 38))
       (setq gp-menu-end-simple (point)))))
-
+        
 (defun gp-menu nil
   "Major-mode for the gp menu buffer.
 The available commands are
@@ -445,8 +445,9 @@ The available commands are
                   (insert (cdr acons))
                   (put-text-property temp (point) 'follow (car acons))
                   (put-text-property temp (point) 'face 'bold)
-                  (put-text-property temp (point) 'mouse-face 'highlight)
+                  (put-text-property temp (point) 'mouse-face 'highlight)    
                   (insert "\n")))  gp-browser-main-alist)
+  (set-buffer-modified-p nil)
   (goto-char (point-min)))
 
 (defface gp-browser-face
@@ -522,7 +523,8 @@ The available commands are
   (get-buffer-create gp-pari-simple-buffer-name)
   (set-buffer gp-pari-simple-buffer-name)
   (setq gp-browser-process
-    (gp-get-shell "simple-pari" gp-pari-simple-buffer-name (concat gp-file-name " -s 10000 -p 10 -emacs")))
+    (gp-get-shell "simple-pari" gp-pari-simple-buffer-name 
+                  (concat gp-file-name " -s 10000 -p 10 " gp-flag-for-emacs)))
 
   ;; We should run the hook as the prompt may have
   ;; been changed in the .gprc:
@@ -547,6 +549,9 @@ The available commands are
        (cons num (gp-split-to-strings (point-max))))
      (mapcar 'car gp-browser-main-alist)))
   (gp-browser-cmd "\q" gp-browser-buffer-name t)
+  (kill-process gp-browser-process)
+  (sit-for 0)
+  (set-buffer-modified-p nil)
   (kill-buffer gp-pari-simple-buffer-name)
   (message (gp-messager 6)))
 
@@ -555,16 +560,43 @@ The available commands are
 ;;--------------------
 
 (defun gp-call-gphelp (win-size word output-buffer opt)
-  "Explicit."
-  ;; Beware! If output is short enough, shell-command echoes in the minibuffer :-(
-  ;; We neutralize the function message to avoid that.
-  ;; That's kind of primitive and local advising :-)
-  (let (message oldmessage)
+  "Explicit. If OUTPUT-BUFFER is t, use current-buffer. If
+OUTPUT-BUFFER is an existing buffer or a string, output goes
+there. If OUTPUT-BUFFER is nil, output goes to temporary buffer"
+  ;; Beware! If output is short enough, shell-command echoes in the minibuffer :-( 
+  ;; We neutralize the function message to avoid that. 
+  ;; That's a kind of primitive and local advising :-)
+  ;; This function is also used at the very beginning through gp-cpl-init to
+  ;; get add all the function names to the completion mecanism.
+
+  ;; If default-directory doesn't exist then run from the root directory
+  ;; since `call-process' must have a current directory for the subprocess.
+  ;; If default-directory does exist then leave it alone, since the user's
+  ;; current directory might be a good place for "xdvi" to save or print to
+  ;; file (although gphelp circa version 2.7 switches to a tempdir).
+  (let ((default-directory (if (file-directory-p default-directory)
+                               default-directory "/"))
+        message oldmessage)
     (fset 'oldmessage (symbol-function 'message))
     (fset 'message (lambda (a &rest b) nil))
-    (shell-command
-     (concat "env COLUMNS=" (number-to-string win-size) " "
-             gp-gphelp-dir "gphelp " opt " \"" word "\"") output-buffer)
+    (if (not output-buffer)
+        (with-temp-buffer
+          (let ((process-connection-type nil) ;; pipe rather than pty
+                (process-environment (copy-sequence process-environment)))
+            (setenv "COLUMNS" (number-to-string win-size))
+            (shell-command
+             (concat gp-gphelp-dir "gphelp " opt " "
+                     (shell-quote-argument word)))))
+      (let ((process-connection-type nil) ;; pipe rather than pty
+                (process-environment (copy-sequence process-environment)))
+            (setenv "COLUMNS" (number-to-string win-size))
+            (shell-command
+             (concat gp-gphelp-dir "gphelp " opt " "
+                     (shell-quote-argument word))
+             output-buffer))
+      (require 'ansi-color)
+      (ansi-color-apply-on-region (point-min) (point-max))
+      )
     (fset 'message (symbol-function 'oldmessage))))
 
 (defun gp-replace (a b)
@@ -578,28 +610,28 @@ The available commands are
 
 (defmacro gp-ask-name-wisely (this-type)
   "Ask in the minibuffer for a \"this-type\" name and provide a default"
-  `(list
-    (let* ( ;; get the word before point into word:
-           (word (gp-find-word-to-complete))
-           ;; get the argument from the minibuffer into arg
-           (arg
-            (progn
-              (define-key minibuffer-local-completion-map " " 'self-insert-command)
-              ;; It is usually 'minibuffer-complete-word, but C-i does that.
-              (completing-read
-               (concat ,this-type
-                       (if (intern-soft word gp-c-array)
-                           ;; If the word before point is a gp function, offer it as default.
-                           (concat " [Default " word "]" )) ": ")
-               ;; use gp-c-array as the completion array
-               gp-c-array))))
+ `(list
+  (let* ( ;; get the word before point into word:
+             (word (gp-find-word-to-complete))
+;; get the argument from the minibuffer into arg
+             (arg
+               (progn
+                 (define-key minibuffer-local-completion-map " " 'self-insert-command)
+                  ;; It is usually 'minibuffer-complete-word, but C-i does that.
+                 (completing-read
+                   (concat ,this-type
+                     (if (intern-soft word gp-c-array)
+;; If the word before point is a gp function, offer it as default.
+                         (concat " [Default " word "]" )) ": ")
+;; use gp-c-array as the completion array
+                   gp-c-array))))
       (define-key minibuffer-local-completion-map " " 'minibuffer-complete-word)
       (if (equal arg "")
-          ;; If the argument supplied is "", and word is a gp symbol, use it as default.
-          ;; (Do not use "" as fn in anycase, so otherwise use " ", which will not
-          ;; produce a help window.)
-          (if (intern-soft word gp-c-array) word " ")
-        ;; Else use the arg.
+;; If the argument supplied is "", and word is a gp symbol, use it as default.
+;; (Do not use "" as fn in anycase, so otherwise use " ", which will not
+;; produce a help window.)
+        (if (intern-soft word gp-c-array) word " ") 
+;; Else use the arg.
         arg))))
 
 (defun gp-get-TeX-man-entry (fn)
@@ -607,7 +639,7 @@ The available commands are
   (interactive (gp-ask-name-wisely (gp-messager 21)))
 
     (gp-call-gphelp (window-width) fn nil "")
-
+    
     (if (buffer-live-p (get-buffer "*Shell Command Output*"))
       (save-excursion
         (set-buffer "*Shell Command Output*")
@@ -641,11 +673,11 @@ If a definition is found, add fn to the array of possible completions"
            (looking-at " not found !"))
            ;; If gp was not running then start it.
            (if (gp-background)
-             (progn
+             (progn 
                (gp-meta-cmd-general (concat "?" fn) nil)
                ;; which sets the buffer "*gp-help*".
                (if (looking-at " *\\*\\*\\* *unknown identifier")
-                 (progn
+                 (progn 
                    (gp-window-manager "*gp-help*" 'gp-remove-help-now)
                    (message (gp-messager 20) fn))
                (if (looking-at " *\\*\\*\\* *user defined variable")
@@ -660,6 +692,7 @@ If a definition is found, add fn to the array of possible completions"
          ;; Else show the help buffer and tell user how to remove help window:
          (gp-window-manager "*gp-help*" 'gp-show-help)
          (gp-info-wind-conf))
+    (set-buffer-modified-p nil)
     (select-window wind)))  ; End of 'gp-get-man-entry
 
 (defun gp-buffer-to-double-list nil
@@ -685,6 +718,7 @@ Similar to \"??? exp\" in gp."
   (gp-call-gphelp 50 exp t "-k -raw")
   ;; Replace ESC[.?m by nothing: (\033 or \e)
   (gp-replace "\033\\[.?m" "")
+  (gp-replace "\\\\_" "_")
 
   (search-backward "\n###\n")
   (forward-char 5)
@@ -703,6 +737,7 @@ Similar to \"??? exp\" in gp."
       (setq major-mode 'gp-menu mode-name "GP MENU")
       (use-local-map gp-menu-map)
       (setq buffer-read-only t)
+      (set-buffer-modified-p nil)
       (goto-char (point-min))
       (search-forward "\n###\n")
       (gp-menu-info)))
@@ -759,10 +794,21 @@ Similar to \"??? exp\" in gp."
                             (concat "/usr/share/lib/pari-" gp-version "/emacs/")
                             (concat "/usr/share/lib/pari-" gp-version "/"))))
 
-    ;; Locate pariemacs.txt:
+    ;; The directory we loaded from should have the exact corresponding
+    ;; README.  Make this the first choice for the search.
+    (let ((filename (symbol-file 'gp-show-pariemacs)))
+      (if filename ;; can be nil if we exist due to `eval' rather than `load'
+          (setq to-be-tested (cons (file-name-directory filename)
+                                   to-be-tested))))
+
+    ;; Locate pariemacs.txt = (new-name) README:
     (if (file-exists-p gp-pariemacs)
         (progn (setq where-it-is gp-pariemacs))
-      (mapcar (lambda (afile) (if (file-exists-p afile) (setq where-it-is afile)))
+      (mapcar (lambda (afile) 
+                (if (and (file-exists-p afile)
+                         ; if it already exist, stop!
+                         (not (file-exists-p where-it-is))) 
+                    (setq where-it-is afile)))
               (mapcar (lambda (apath) (expand-file-name (concat apath "/README")))
                       (append to-be-tested load-path))))
 
@@ -770,6 +816,7 @@ Similar to \"??? exp\" in gp."
       (progn
         ;; We switch to the buffer *gp-help* and erase its content:
         (set-buffer (get-buffer-create "*gp-help*"))
+        (setq buffer-read-only nil)
         (erase-buffer)
         (message where-it-is)  ;; tell *Messages* which version of pariemacs is used.
         (insert-file where-it-is)
@@ -805,23 +852,25 @@ used for completion."
     (gp-replace "\033\\[.?m" "")
     (let ((adoublelist (gp-buffer-to-double-list)))
       (mapcar 'gp-add-symbol (car adoublelist)))
+    (remove-overlays)
     (kill-buffer "*gp-menu*")))
 
 (defconst gp-help-menu
    (list
-   ["Browser" gp-browser :active t :included (eq window-system 'x)
-                         :key-sequence nil]
-   '("Info ..."
-      ["on Subject..." gp-get-apropos t]
-      ["on Function..." gp-get-man-entry t])
-   '("TeX Info"
-      ["Manual" gpman :active t :key-sequence nil]
-      ["Tutorial" gp-tutorial :active t :key-sequence nil]
-      ["on Function ..." gp-get-TeX-man-entry :active t :key-sequence nil])
+   (list "Info ..."
+         (vector (gp-messager 94) 'gp-get-apropos t)
+         (vector (gp-messager 95) 'gp-get-man-entry t))
+   (list "TeX Info"
+         (vector (gp-messager 96) 'gpman ':active t ':key-sequence nil)
+         (vector (gp-messager 97) 'gp-tutorial ':active t ':key-sequence nil)
+         (vector (gp-messager 95) 'gp-get-TeX-man-entry ':active t ':key-sequence nil))
+    ;; "Browsing through predefined functions"
+   (vector (gp-messager 93) 'gp-browser ':active t 
+           ':included (eq window-system 'x) ':key-sequence nil)
    (vector (gp-messager 63) 'gp-show-pariemacs 't)))
 
 (add-hook 'pari-mode-hook
-  '(lambda nil
+  '(lambda nil 
      (define-key gp-map "\M-?"          (function gp-get-man-entry))
      (define-key gp-map "\M-H"          (function gp-get-apropos))
      (define-key gp-script-map "\M-?"   (function gp-get-man-entry))
@@ -833,7 +882,7 @@ used for completion."
 (add-hook 'pari-menu-bar-update-hook
   '(lambda nil ;; The item (gp-messager 48) should already exist.
                ;; It is build at the very beginning.
-     (when (and gp-menu-barp
+     (when (and gp-menu-barp 
                 (or (and (eq major-mode 'gp-mode)
                          (= gp-menu-map-level 1))
                     (and (eq major-mode 'gp-script-mode)
@@ -853,10 +902,12 @@ used for completion."
             ))
         gp-help-menu)
        (when (eq major-mode 'gp-mode)
-         (easy-menu-add-item GP-menu-map nil gp-separator (gp-messager 48))
+         (easy-menu-change '("GP") "--" nil (gp-messager 48)))
+       (when (eq major-mode 'gp-script-mode)
+         (easy-menu-change '("GP-script") "--" nil (gp-messager 48)))
+       (when (eq major-mode 'gp-mode)
          (message "Menu bar item GP: help part loaded."))
        (when (eq major-mode 'gp-script-mode)
-         (easy-menu-add-item GP-script-menu-map nil gp-separator (gp-messager 48))
          (message "Menu bar item GP-script: help part loaded.")))))
 
 ;; pari-help.el ends here.
